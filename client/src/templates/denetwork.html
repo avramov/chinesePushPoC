@@ -1,0 +1,46 @@
+
+<div class="row" data-ng-controller="DashboardCtrl">
+    <div class="col-lg-6">
+        <rd-widget>
+            <rd-widget-header icon="fa-sitemap" title="District Energy Network - {{currentNetwork.name}}"></rd-widget-header>
+
+            <!-- Update DE Network view body -->
+            <rd-widget-body classes="medium no-padding" style="height: 100%">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                        <tr><th>Optimization type</th><td><label><input type="radio" ng-model="optimizationtype" ng-change="updateOptimizationType(optimizationtype)" name="optimizationtypeselection" value="flowbasedoptimization">&nbsp; &nbsp; Flow based optimization (t/h)</label></td><td><label><input type="radio" ng-model="optimizationtype" ng-change="updateOptimizationType(optimizationtype)" name="optimizationtypeselection" value="energybasedoptimization">&nbsp; &nbsp; Energy based optimization (kW)</label></td><td><label><input type="radio" ng-model="optimizationtype" ng-change="updateOptimizationType(optimizationtype)" name="optimizationtypeselection" value="flowandenergybasedoptimization">&nbsp; &nbsp; Flow and Energy based optimization</label></td></tr>
+                        <tr><th>Heat production (flow)</th><td><input type="text" readonly ng-model="deproductionflow" placeholder={{calculateNetworkFlowProduction()}} class="form-control input-sm" /></td><td>(t/h)</td><td></td></tr>
+                        <tr><th>Heat production (energy)</th><td><input type="text" readonly ng-model="deproductionenergy" placeholder={{calculateNetworkEnergyProduction()}} class="form-control input-sm" /> </td><td>(kW)</td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </rd-widget-body>
+
+        </rd-widget>
+    </div>
+    <div class="col-lg-6">
+        <rd-widget>
+            <rd-widget-header icon="fa-area-chart" title="DE Network history - {{currentDENetworkChartTypeText}}"></rd-widget-header>
+            <rd-widget-body classes="medium no-padding">
+                <canvas tc-chartjs-line chart-options="options" chart-data="denetworkData" auto-legend></canvas>
+            </rd-widget-body>
+
+            <rd-widget-footer>
+                <ul class="pagination pagination-sm pull-left">
+                    <li><a href="" ng-click="changeDENetworkChartType()">Change history view</a></li>
+                </ul>
+
+                <ul class="pagination pagination-sm pull-right">
+                    <li><a href="" ng-click="changeGranulation('1day')">1 Day</a></li>
+                    <li><a href="" ng-click="changeGranulation('1week')">1 Week</a></li>
+                    <li><a href="" ng-click="changeGranulation('1month')">1 Month</a></li>
+                    <li><a href="" ng-click="changeGranulation('1year')">1 Year</a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </rd-widget-footer>
+
+        </rd-widget>
+    </div>
+
+</div>

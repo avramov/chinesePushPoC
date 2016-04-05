@@ -1,0 +1,22 @@
+<div class="row" data-ng-controller="DashboardCtrl">
+  <div class="col-lg-6">
+    <rd-widget>
+      <rd-widget-header icon="fa-envelope" title="Notifications">
+        <input type="text" ng-model="filtertextnotifications" ng-change="filterNotifications(filtertextnotifications)" placeholder="Filter by" class="form-control input-sm" />
+      </rd-widget-header>
+
+      <rd-widget-body classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Severity</th><th>Text</th><th>Occured at:</th></tr>
+            <tr ng-repeat="notification in notifications | filter:filtertextnotifications"><td><span ng-if="notification.severity==0" class='text-danger'><i class='fa fa-warning fa-2x'></i></span><span ng-if="notification.severity==1" class='text-important'><i class='fa fa-life-bouy fa-2x'></i></span><span ng-if="notification.severity==2" class='text-warning'><i class='fa fa-info-circle fa-2x'></i></span></td><td>{{notification.text}}</td><td>{{notification.timestamp * 1000 | date:'dd MMMM yyyy (EEE), HH:mm:ss Z'}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+    </rd-widget>
+  </div>
+
+
+</div>

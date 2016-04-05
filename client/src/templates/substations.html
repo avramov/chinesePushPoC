@@ -1,0 +1,166 @@
+<div class="row" data-ng-controller="DashboardCtrl">
+  <div class="col-lg-6">
+    <rd-widget>
+      <!-- Normal substation view header with all substations -->
+      <rd-widget-header ng-if="currentSubstationViewMode==0" icon="fa-building" title="Substations">
+        <input type="text" ng-model="filtersubstationstext" ng-change="filterSubstations(filtersubstationstext)" placeholder="Filter by" class="form-control input-sm" />
+      </rd-widget-header>
+
+      <!-- Add substation view header -->
+      <rd-widget-header ng-if="currentSubstationViewMode==1" icon="fa-building" title="Add substation"></rd-widget-header>
+
+      <!-- View single substation view header -->
+      <rd-widget-header ng-if="currentSubstationViewMode==2" icon="fa-building" title="View substation - {{currentSubstation.name}}"></rd-widget-header>
+
+
+      <!-- Normal substation view body with all substations -->
+      <rd-widget-body ng-if="currentSubstationViewMode==0" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><th>Heated area</th><th>Branch name</th><th>Status</th><th></th></tr>
+              <tr ng-repeat="substation in substations | filter:filtersubstationstext"><td>{{substation.name}}</td><td>{{substation.kvm}} m<sup>2</sup></td><td>{{substation.branchname}}</td><td> <span ng-if="substation.status==0" class='text-success'><i class='fa fa-check'></i></span><span ng-if="substation.status==1" tooltip='Critical Error on the Substation!' class='text-danger'><i class='fa fa-warning'></i></span><span ng-if="substation.status==2" tooltip='Substation not connected to the cloud' class='text-warning'><i class='fa fa-flash'></i></span></td><td><input type="radio" ng-model="selectedsubstation" ng-click="updateCurrentSubstation(selectedsubstation)" name="substationselection" id="substation_{{substation.macaddress}}" value="{{substation.macaddress}}"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+      <!-- Add substation view body -->
+      <rd-widget-body ng-if="currentSubstationViewMode==1" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><td></td><td><input type="text" ng-model="substationname" placeholder="" class="form-control input-sm" ng-change="checkSubstationName(substationname)" /></td><td></td></tr>
+            <tr><th>MAC Address</th><td></td><td><input type="text" ng-model="substationmac" placeholder="XXXXXXXXXXXXXXXX" class="form-control input-sm" ng-change="checkSubstationMAC(substationmac)"/></td><td></td></tr>
+            <tr><th>Connection string</th><td></td><td><input type="text" ng-model="substationconnstring" placeholder="" class="form-control input-sm" ng-change="checkSubstationConnString(substationconnstring)" /></td><td></td></tr>
+            <tr><th>Heated area</th><td></td><td><input type="text" ng-model="substationheatedarea" placeholder="" class="form-control input-sm" ng-change="checkSubstationHeatedArea(substationheatedarea)" /></td><td>m<sup>2</sup></td></tr>
+            <tr><th>Branch name</th><td></td><td><input type="text" ng-model="substationbranchname" placeholder="" class="form-control input-sm" ng-change="checkSubstationBranchName(substationbranchname)" /></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+      <!-- View single substation view body -->
+      <rd-widget-body ng-if="currentSubstationViewMode==2" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><td></td><td><input type="text" readonly ng-model="substationname" placeholder="{{currentSubstation.name}}" class="form-control input-sm" /></td><td></td></tr>
+            <tr><th>Heated area</th><td></td><td><input type="text" readonly ng-model="substationheatedarea" placeholder="{{currentSubstation.kvm}}" class="form-control input-sm" /></td><td>m<sup>2</sup></td></tr>
+            <tr><th>Maximum flow</th><td></td><td><input type="text" readonly ng-model="substationplannedflow" placeholder="{{currentSubstation.plannedflow}}" class="form-control input-sm" /></td><td>(t/h)</td></tr>
+            <tr><th>Actual flow</th><td></td><td><input type="text" readonly ng-model="substationactualflow" placeholder="{{currentSubstation.actualflow}}" class="form-control input-sm" /></td><td>(t/h)</td></tr>
+            <tr><th>Maximum energy</th><td></td><td><input type="text" readonly ng-model="substationplannedenergy" placeholder="{{currentSubstation.plannedenergy}}" class="form-control input-sm" /></td><td>(kW)</td></tr>
+            <tr><th>Actual energy</th><td></td><td><input type="text" readonly ng-model="substationactualenergy" placeholder="{{currentSubstation.actualenergy}}" class="form-control input-sm" /></td><td>(kW)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+
+      <!-- Normal substations view footer -->
+      <rd-widget-footer ng-if="currentSubstationViewMode==0">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="addSubstationView()">Add substation</a></li>
+        </ul>
+
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="viewSingleSubstationView()">View substation</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+      <!-- Add substation footer -->
+      <rd-widget-footer ng-if="currentSubstationViewMode==1">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="addSubstation()">Submit</a></li>
+        </ul>
+
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="backToSubstationsView()">Back</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+      <!-- View single substation view footer -->
+      <rd-widget-footer ng-if="currentSubstationViewMode==2">
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="backToSubstationsView()">Back</a></li>
+        </ul>
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="removeSubstationsView()">Remove</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+
+    </rd-widget>
+  </div>
+  <div class="col-lg-6">
+    <rd-widget>
+
+      <!-- Right side pane header in the normal substations view mode -->
+      <rd-widget-header ng-if="currentSubstationViewMode==0" icon="fa-globe" title="Substations map"><input type="text" ng-model="address" ng-change="checkAddress(address)" placeholder="Address" class="form-control input-sm" /></rd-widget-header>
+
+      <!-- Right side pane header in the add substation view mode -->
+      <rd-widget-header ng-if="currentSubstationViewMode==1" icon="fa-globe" title="Substation location"><input type="text" ng-model="address" ng-change="checkAddress(address)" placeholder="Address" class="form-control input-sm" /></rd-widget-header>
+
+      <!-- Right side pane header in the view single substation view mode -->
+      <rd-widget-header ng-if="currentSubstationViewMode==2" icon="fa-area-chart" title="Substation history - {{currentSubstationChartTypeText}}"></rd-widget-header>
+
+
+      <!-- Right side pane body in the normal substations view mode -->
+      <rd-widget-body ng-if="currentSubstationViewMode==0" classes="medium no-padding">
+
+        <div class="angular-google-map-container">
+
+          <div map-lazy-load="http://maps.google.cn/maps/api/js"
+               map-lazy-load-params="{{googleMapsUrl}}">
+            <ng-map center="{{address}}">
+              <marker title="{{substation.name}}: Flow={{substation.actualflow}}(t/h), Energy={{substation.actualenergy}}(kW), State={{convertStatusToText(substation.status)}}" ng-repeat="substation in substations" id="{{substation.macaddress}}" position="{{substation.address}}"></marker>
+            </ng-map>
+          </div>
+
+        </div>
+      </rd-widget-body>
+
+      <!-- Right side pane body in the add substation view mode -->
+      <rd-widget-body ng-if="currentSubstationViewMode==1" classes="medium no-padding">
+
+        <div class="angular-google-map-container">
+
+          <div map-lazy-load="http://maps.google.cn/maps/api/js"
+               map-lazy-load-params="{{googleMapsUrl}}">
+            <ng-map center="{{address}}">
+              <marker  position="{{address}}"></marker>
+            </ng-map>
+          </div>
+
+        </div>
+      </rd-widget-body>
+
+      <!-- Right side pane body in the view single substation view mode -->
+      <rd-widget-body ng-if="currentSubstationViewMode==2" classes="medium no-padding">
+        <canvas tc-chartjs-line chart-options="options" chart-data="substationData" auto-legend></canvas>
+      </rd-widget-body>
+
+      <!-- View single substation view footer -->
+      <rd-widget-footer ng-if="currentSubstationViewMode==2">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="changeSubstationChartType()">Change view</a></li>
+        </ul>
+        <div class="clearfix"></div>
+
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="changeGranulation('1day')">1 Day</a></li>
+          <li><a href="" ng-click="changeGranulation('1week')">1 Week</a></li>
+          <li><a href="" ng-click="changeGranulation('1month')">1 Month</a></li>
+          <li><a href="" ng-click="changeGranulation('1year')">1 Year</a></li>
+        </ul>
+        <div class="clearfix"></div>
+
+      </rd-widget-footer>
+
+    </rd-widget>
+  </div>
+
+</div>

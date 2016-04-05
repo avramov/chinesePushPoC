@@ -1,0 +1,29 @@
+
+<div class="row" data-ng-controller="MasterCtrl">
+    <div class="col-lg-6">
+        <rd-widget>
+            <rd-widget-header icon="fa-home" title="Please login in order to access the portal"></rd-widget-header>
+
+            <rd-widget-body classes="medium no-padding" style="height: 100%">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                        <tr><th>User name</th><td><input type="text" ng-model="username" placeholder="User name" ng-change="updateUsername(username)" class="form-control input-sm" /></td></tr>
+                        <tr><th>Password</th><td><input type="password" ng-model="password" placeholder="Password" ng-change="updatePassword(password)" class="form-control input-sm" /></td></tr>
+                        <tr></tr>
+                        <tr ng-if="showerror"><td></td><td style="color: red">Not able to authenticate the user</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </rd-widget-body>
+
+            <rd-widget-footer>
+                <ul class="pagination pagination-sm pull-left">
+                    <li><a href="#" ng-click="userLogin()">Login</a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </rd-widget-footer>
+        </rd-widget>
+    </div>
+
+</div>

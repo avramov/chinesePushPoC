@@ -1,0 +1,118 @@
+<div class="row alerts-container" data-ng-controller="DashboardCtrl">
+  <div class="col-xs-12">
+	  <div ng-if="nrNetworks > 1" class="btn-group dropdown" uib-dropdown="" style="">
+		  <button id="split-button" type="button" class="btn btn-danger">Choose DE Network</button>
+		  <button type="button" class="btn btn-danger dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+			  <span class="caret"></span>
+			  <span class="sr-only">Split button!</span>
+		  </button>
+		  <ul uib-dropdown-menu="" role="menu" aria-labelledby="split-button" class="dropdown-menu">
+			  <li ng-repeat="denetwork in userNetworks" role="menuitem"><a ng-click="updateSelectedNetwork" href="">{{denetwork.name}}</a></li>
+		  </ul>
+	  </div>
+
+</div>
+
+<div class="row" data-ng-controller="DashboardCtrl">
+	<div class="col-lg-3 col-md-6 col-xs-12">
+		<rd-widget>
+			<rd-widget-body>
+				<div class="widget-icon orange pull-left">
+					<i class="fa fa-users"></i>
+				</div>
+				<div class="title">{{userscount}}</div>
+				<div class="comment">Users</div>
+			</rd-widget-body>
+		</rd-widget>
+	</div>
+	<div class="col-lg-3 col-md-6 col-xs-12">
+		<rd-widget>
+			<rd-widget-body>
+				<div class="widget-icon green pull-left">
+					<i class="fa fa-building"></i>
+				</div>
+				<div class="title">{{onlinecount}}</div>
+				<div class="comment">Online</div>
+			</rd-widget-body>
+		</rd-widget>
+	</div>
+	<div class="col-lg-3 col-md-6 col-xs-12">
+		<rd-widget>
+			<rd-widget-body>
+				<div class="widget-icon red pull-left">
+					<i class="fa fa-building"></i>
+				</div>
+				<div class="title">{{offlinecount}}</div>
+				<div class="comment">Offline</div>
+			</rd-widget-body>
+		</rd-widget>
+	</div>
+	<div class="col-lg-3 col-md-6 col-xs-12">
+		<rd-widget>
+			<rd-widget-body>
+				<div class="widget-icon blue pull-left">
+					<i class="fa fa-envelope"></i>
+				</div>
+				<div class="title">{{notificationcount}}</div>
+				<div class="comment">Notifications</div>
+			</rd-widget-body>
+		</rd-widget>
+	</div>
+</div>
+
+<div class="row" data-ng-controller="DashboardCtrl">
+	<div class="col-lg-6">
+		<rd-widget>
+      		<rd-widget-header icon="fa-building" title="Substations">
+				<input type="text" ng-change="filterSubstations(filtersubstationstext)" ng-model="filtersubstationstext" placeholder="Filter by" class="form-control input-sm" />
+      		</rd-widget-header>
+      		<rd-widget-body classes="medium no-padding">
+				<div class="table-responsive">
+					<table class="table">
+						<tbody>
+							<tr><th>Name</th><th>Heated area</th><th>Branch name</th><th>% Flow</th><th>% Energy</th><th>Status</th></tr>
+							<tr ng-repeat="substation in substations | filter:filtersubstationstext"><td>{{substation.name}}</td><td>{{substation.kvm}} m<sup>2</sup></td><td>{{substation.branchname}}</td><td>{{calculatePercentageOfTotalFlow(substation.macaddress)}}</td><td>{{calculatePercentageOfTotalEnergy(substation.macaddress)}}</td><td> <span ng-if="substation.status==0" class='text-success'><i class='fa fa-check'></i></span><span ng-if="substation.status==1" tooltip='Critical Error on the Substation!' class='text-danger'><i class='fa fa-warning'></i></span><span ng-if="substation.status==2" tooltip='Substation not connected to the cloud' class='text-warning'><i class='fa fa-flash'></i></span></td></tr>
+						</tbody>
+					</table>
+				</div>
+			</rd-widget-body>
+		</rd-widget>
+	</div>
+	<div class="col-lg-6">
+		<rd-widget>
+			<rd-widget-header icon="fa-sitemap" title="DE Network">
+				<input type="text" ng-change="filterSubsHeatplantRecords(filtertextsubsheatplants)" ng-model="filtertextsubsheatplants" placeholder="Filter by" class="form-control input-sm" />
+			</rd-widget-header>
+			<rd-widget-body classes="medium no-padding">
+				<div class="table-responsive">
+					<table class="table">
+						<tbody>
+						<tr>
+							<th>DE Network</th>
+							<th>Name</th>
+							<th>Branch</th>
+							<th>Maximum / Actual flow</th>
+							<th>Maximum / Actual energy</th>
+						</tr>
+						<tr>
+							<th>{{currentNetwork.name}}</th>
+							<th></th>
+							<th></th>
+							<th>{{calculateNetworkFlowProduction()}} / {{calculateNetworkFlowConsumption()}}</th>
+							<th>{{calculateNetworkEnergyProduction()}} / {{calculateNetworkEnergyConsumption()}}</th>
+						</tr>
+						<tr ng-if="selectedDatatype==0" ng-repeat="substation in substations | filter:filtertextsubsheatplants"><td></td><td>{{substation.name}}</td><td>{{substation.branchname}}</td><td>{{substation.plannedflow}} / {{substation.actualflow}}</td><td>{{substation.plannedenergy}} / {{substation.actualenergy}}</td></tr>
+						<tr ng-if="selectedDatatype==1" ng-repeat="heatplant in heatplants | filter:filtertextsubsheatplants"><td></td><td>{{heatplant.name}}</td><td>{{heatplant.branchname}}</td><td>{{heatplant.plannedflow}} / {{heatplant.actualflow}}</td><td>{{heatplant.plannedenergy}} / {{heatplant.actualenergy}}</td></tr>
+						</tbody>
+					</table>
+        		</div>
+			</rd-widget-body>
+			<rd-widget-footer>
+				<ul class="pagination pagination-sm pull-right">
+					<li><a href="" ng-click="switchDataType()">Switch view</a></li>
+				</ul>
+				<div class="clearfix"></div>
+			</rd-widget-footer>
+		<rd-widget>
+	</div>
+</div>

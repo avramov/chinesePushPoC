@@ -1,0 +1,167 @@
+<div class="row" data-ng-controller="DashboardCtrl">
+
+  <div class="col-lg-6">
+    <rd-widget>
+      <!-- Normal heatplant view header with all heatplants -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==0" icon="fa-building" title="Heatplants">
+        <input type="text" ng-model="filterheatplantstext" ng-change="filterHeatplants(filterheatplantstext)" placeholder="Filter by" class="form-control input-sm" />
+      </rd-widget-header>
+
+      <!-- Add heatplant view header -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==1" icon="fa-building" title="Add heatplant"></rd-widget-header>
+
+      <!-- View single heatplant view header -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==2" icon="fa-building" title="View heatplant - {{currentHeatplant.name}}"></rd-widget-header>
+
+
+      <!-- Normal heatplant view body with all heatplants -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==0" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><th>Branch name</th><th>Expected production (flow)</th><th>Expected production (energy)</th><th>Status</th><th></th></tr>
+            <tr ng-repeat="heatplant in heatplants | filter:filterheatplantstext"><td>{{heatplant.name}}</td><td>{{heatplant.branchname}}</td><td>{{heatplant.plannedflow}}</td><td>{{heatplant.plannedenergy}}</td><td><input type="radio" ng-model="selectedheatplant" ng-click="updateCurrentHeatplant(selectedheatplant)" name="heatplantselection" id="heatplant_{{heatplant.id}}" value="{{heatplant.id}}"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+      <!-- Add heatplant view body -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==1" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><td></td><td><input type="text" ng-model="heatplantname" placeholder="" class="form-control input-sm" /></td><td></td></tr>
+            <tr><th>Expected production (flow)</th><td></td><td><input type="text" ng-model="heatplantplannedflow" placeholder="" class="form-control input-sm" /></td><td>(t/h)</td></tr>
+            <tr><th>Expected production (energy)</th><td></td><td><input type="text" ng-model="heatplantexpectedenergy" placeholder="" class="form-control input-sm" /></td><td>(kW)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+      <!-- View single heatplant view body -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==2" classes="medium no-padding" style="height: 100%">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr><th>Name</th><td></td><td><input type="text" readonly ng-model="substationname" placeholder="{{currentSubstation.name}}" class="form-control input-sm" /></td><td></td></tr>
+            <tr><th>Expected production (flow)</th><td></td><td><input type="text" ng-model="heatplantplannedprodflow" placeholder="{{currentHeatplant.plannedflow}}" class="form-control input-sm" /></td><td>(t/h)</td></tr>
+            <tr><th>Actual production (flow)</th><td></td><td><input type="text" readonly ng-model="heatplantactualprodflow" placeholder="{{currentHeatplant.actualflow}}" class="form-control input-sm" /></td><td>(t/h)</td></tr>
+            <tr><th>Expected production (energy)</th><td></td><td><input type="text" ng-model="heatplantplannedprodenergy" placeholder="{{currentHeatplant.plannedenergy}}" class="form-control input-sm" /></td><td>(kW)</td></tr>
+            <tr><th>Actual production (energy)</th><td></td><td><input type="text" readonly ng-model="heatplantactualprodenergy" placeholder="{{currentHeatplant.actualenergy}}" class="form-control input-sm" /></td><td>(kW)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </rd-widget-body>
+
+
+      <!-- Normal heatplants view footer -->
+      <rd-widget-footer ng-if="currentHeatplantViewMode==0">
+        <!--
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="addHeatplantView()">Add heatplant</a></li>
+        </ul>
+-->
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="viewSingleHeatplantView()">View heatplant</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+      <!-- Add heatplant footer -->
+      <rd-widget-footer ng-if="currentHeatplantViewMode==1">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="toggleModal()">Submit</a></li>
+        </ul>
+
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="backToHeatplantsView()">Back</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+      <!-- View single heatplant view footer -->
+      <rd-widget-footer ng-if="currentHeatplantViewMode==2">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="backToHeatplantsView()">Back</a></li>
+        </ul>
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="updateHeatplant()">Update</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </rd-widget-footer>
+
+
+    </rd-widget>
+  </div>
+
+  <div class="col-lg-6">
+    <rd-widget>
+
+      <!-- Right side pane header in the normal heatplants view mode -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==0" icon="fa-globe" title="Heatplants map"><input type="text" ng-model="address" ng-change="checkAddress(address)" placeholder="Address" class="form-control input-sm" /></rd-widget-header>
+
+      <!-- Right side pane header in the add heatplant view mode -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==1" icon="fa-globe" title="Heatplant location"><input type="text" ng-model="address" ng-change="checkAddress(address)" placeholder="Address" class="form-control input-sm" /></rd-widget-header>
+
+      <!-- Right side pane header in the view single heatplant view mode -->
+      <rd-widget-header ng-if="currentHeatplantViewMode==2" icon="fa-area-chart" title="Heatplant history - {{currentHeatplantChartTypeText}}"></rd-widget-header>
+
+
+      <!-- Right side pane body in the normal heatplants view mode -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==0" classes="medium no-padding">
+
+        <div class="angular-google-map-container">
+
+          <div map-lazy-load="http://maps.google.cn/maps/api/js"
+               map-lazy-load-params="{{googleMapsUrl}}">
+            <ng-map center="{{address}}">
+              <marker title="{{heatplant.name}}: Flow={{heatplant.actualflow}}(t/h), Energy={{heatplant.actualenergy}}(kW)" ng-repeat="heatplant in heatplants" id="{{heatplant.id}}" position="{{heatplant.address}}"></marker>
+            </ng-map>
+          </div>
+
+        </div>
+      </rd-widget-body>
+
+      <!-- Right side pane body in the add heatplant view mode -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==1" classes="medium no-padding">
+
+        <div class="angular-google-map-container">
+
+          <div map-lazy-load="http://maps.google.cn/maps/api/js"
+               map-lazy-load-params="{{googleMapsUrl}}">
+            <ng-map center="{{address}}">
+              <marker  position="{{address}}"></marker>
+            </ng-map>
+          </div>
+
+        </div>
+      </rd-widget-body>
+
+      <!-- Right side pane body in the view single heatplant view mode -->
+      <rd-widget-body ng-if="currentHeatplantViewMode==2" classes="medium no-padding">
+        <canvas tc-chartjs-line chart-options="options" chart-data="heatplantData" auto-legend></canvas>
+      </rd-widget-body>
+
+      <!-- View single heatplant view footer -->
+      <rd-widget-footer ng-if="currentHeatplantViewMode==2">
+        <ul class="pagination pagination-sm pull-left">
+          <li><a href="" ng-click="changeHeatplantChartType()">Change view</a></li>
+        </ul>
+        <div class="clearfix"></div>
+
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="" ng-click="changeGranulation('1day')">1 Day</a></li>
+          <li><a href="" ng-click="changeGranulation('1week')">1 Week</a></li>
+          <li><a href="" ng-click="changeGranulation('1month')">1 Month</a></li>
+          <li><a href="" ng-click="changeGranulation('1year')">1 Year</a></li>
+        </ul>
+        <div class="clearfix"></div>
+
+      </rd-widget-footer>
+
+
+    </rd-widget>
+  </div>
+
+</div>
